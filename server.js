@@ -1,14 +1,20 @@
-const Hapi = require("@hapi/hapi");
-const routes = require("./config/routes");
-const config = require('./config/envs-config');
+const Hapi = require('@hapi/hapi');
+const routes = require('./config/routes'); // Importe as rotas configuradas
 
+const init = async () => {
+    // Criação do servidor
+    const server = Hapi.server({
+        port: 3000, // Porta do servidor
+        host: 'localhost', // Pode ser alterado para 0.0.0.0 para acesso externo
+    });
 
-const server = Hapi.server({
-    port: config.port,
-    host: config.host
-});
+    // Registro das rotas
+    server.route(routes);
 
-//apresenta as rotas http mapeadas ao hapi
-routes.forEach((path) => server.route(path));
+    // Inicialização do servidor
+    await server.start();
+    console.log(`Server running on ${server.info.uri}`);
+};
 
-module.exports = server;
+// Exporte a função de inicialização
+module.exports = { start: init };
